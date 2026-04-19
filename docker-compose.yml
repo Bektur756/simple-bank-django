@@ -18,7 +18,7 @@ services:
   web:
     build:
       context: .
-    command: /app/entrypoint.sh
+    command: sh /app/entrypoint.sh
     environment:
       DJANGO_DEBUG: "True"
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
@@ -32,8 +32,6 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
 
 volumes:
   postgres_data:
