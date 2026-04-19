@@ -1,0 +1,23 @@
+.venv/
+.uv-cache/
+__pycache__/
+*.py[cod]
+*.sqlite3
+.DS_Store
+
+# Django static/media overrides
+staticfiles/
+media/
+
+# Environment files
+.env
+.env.*
+
+# Test and coverage output
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Type checker caches
+.mypy_cache/
+.ruff_cache/

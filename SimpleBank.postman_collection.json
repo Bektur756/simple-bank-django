@@ -1,0 +1,216 @@
+{
+  "info": {
+    "_postman_id": "c3e2d6d4-7f2a-4c66-9f3c-4cfcb2f90f84",
+    "name": "SimpleBank API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "receiver_account_number",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Register User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const data = pm.response.json();",
+              "  pm.collectionVariables.set('token', data.token);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"strong-pass-123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/register/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "register",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  const data = pm.response.json();",
+              "  pm.collectionVariables.set('token', data.token);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"strong-pass-123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/login/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "login",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Balance",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/account/balance/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "account",
+            "balance",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Transactions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/transactions/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "transactions",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Transactions By Date",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/transactions/?from=2026-04-01&to=2026-04-30",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "transactions",
+            ""
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "2026-04-01"
+            },
+            {
+              "key": "to",
+              "value": "2026-04-30"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Transfer Money",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"account_number\": \"{{receiver_account_number}}\",\n  \"amount\": \"100.00\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/transfers/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "transfers",
+            ""
+          ]
+        }
+      }
+    }
+  ]
+}
