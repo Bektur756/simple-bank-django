@@ -1,5 +1,4 @@
 from rest_framework import generics, permissions, status
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,6 +8,7 @@ from .serializers import (
     TransactionFilterSerializer,
     TransactionSerializer,
     TransferSerializer,
+    build_token_pair,
 )
 
 
@@ -20,11 +20,12 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        token = Token.objects.get(user=user)
+        tokens = build_token_pair(user)
 
         return Response(
             {
-                "token": token.key,
+                "access": tokens["access"],
+                "refresh": tokens["refresh"],
                 "email": user.email,
                 "account_number": user.account.account_number,
                 "balance": user.account.balance,
@@ -39,8 +40,7 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        token, _ = Token.objects.get_or_create(user=serializer.validated_data["user"])
-        return Response({"token": token.key})
+        return Response(build_token_pair(serializer.validated_data["user"]))
 
 
 class BalanceView(APIView):

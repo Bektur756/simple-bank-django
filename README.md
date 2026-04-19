@@ -2,7 +2,7 @@
 
 SimpleBank is an API-only Django service that provides basic bank account functionality:
 - user registration with email and password
-- token-based authentication
+- JWT-based authentication
 - automatic bank account creation with a unique 10-digit account number
 - EUR 10,000 welcome bonus for new users
 - balance lookup
@@ -70,7 +70,7 @@ The application reads database and Django runtime settings from environment vari
 All authenticated endpoints require:
 
 ```text
-Authorization: Token <your-token>
+Authorization: Bearer <access-token>
 ```
 
 ### 1. Register
@@ -90,7 +90,8 @@ Response:
 
 ```json
 {
-  "token": "user-token",
+  "access": "jwt-access-token",
+  "refresh": "jwt-refresh-token",
   "email": "alice@example.com",
   "account_number": "1234567890",
   "balance": "10000.00"
@@ -101,7 +102,7 @@ Behavior:
 - creates a new user
 - creates a new bank account with a unique 10-digit account number
 - credits the EUR 10,000 welcome bonus
-- returns the auth token
+- returns a JWT access/refresh token pair
 
 ### 2. Login
 
@@ -120,7 +121,8 @@ Response:
 
 ```json
 {
-  "token": "user-token"
+  "access": "jwt-access-token",
+  "refresh": "jwt-refresh-token"
 }
 ```
 
@@ -203,6 +205,6 @@ Transfer rules:
 
 ## Notes
 
-- The project uses token authentication from Django REST Framework.
+- The project uses JWT authentication via `djangorestframework-simplejwt`.
 - The service is API-only; no frontend is included.
 - The default Docker setup is aimed at local development.

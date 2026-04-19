@@ -21,7 +21,7 @@ class SimpleBankAPITests(APITestCase):
         return response
 
     def authenticate(self, token):
-        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token}")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     def test_registration_creates_account_and_welcome_bonus(self):
         response = self.register_user("alice@example.com")
@@ -35,9 +35,11 @@ class SimpleBankAPITests(APITestCase):
         self.assertEqual(transaction.type, Transaction.Type.CREDIT)
         self.assertEqual(transaction.amount, Decimal("10000.00"))
         self.assertEqual(response.data["account_number"], account.account_number)
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
 
-    def test_login_returns_existing_token(self):
-        register_response = self.register_user("alice@example.com")
+    def test_login_returns_jwt_pair(self):
+        self.register_user("alice@example.com")
 
         response = self.client.post(
             reverse("login"),
@@ -46,7 +48,8 @@ class SimpleBankAPITests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["token"], register_response.data["token"])
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
 
     def test_balance_and_transaction_history_require_authentication(self):
         self.register_user("alice@example.com")
@@ -60,7 +63,7 @@ class SimpleBankAPITests(APITestCase):
     def test_transfer_applies_percentage_fee_and_records_transactions(self):
         sender_response = self.register_user("alice@example.com")
         receiver_response = self.register_user("bob@example.com")
-        self.authenticate(sender_response.data["token"])
+        self.authenticate(sender_response.data["access"])
 
         response = self.client.post(
             reverse("transfers"),
@@ -92,7 +95,7 @@ class SimpleBankAPITests(APITestCase):
     def test_transfer_uses_percentage_fee_when_higher_than_minimum(self):
         sender_response = self.register_user("alice@example.com")
         receiver_response = self.register_user("bob@example.com")
-        self.authenticate(sender_response.data["token"])
+        self.authenticate(sender_response.data["access"])
 
         response = self.client.post(
             reverse("transfers"),
@@ -110,7 +113,7 @@ class SimpleBankAPITests(APITestCase):
     def test_transfer_rejects_insufficient_funds(self):
         sender_response = self.register_user("alice@example.com")
         receiver_response = self.register_user("bob@example.com")
-        self.authenticate(sender_response.data["token"])
+        self.authenticate(sender_response.data["access"])
 
         response = self.client.post(
             reverse("transfers"),
@@ -126,7 +129,7 @@ class SimpleBankAPITests(APITestCase):
 
     def test_transactions_can_be_filtered_by_date_range(self):
         register_response = self.register_user("alice@example.com")
-        self.authenticate(register_response.data["token"])
+        self.authenticate(register_response.data["access"])
         account = BankAccount.objects.get(account_number=register_response.data["account_number"])
         welcome_transaction = account.transactions.get(description="Welcome bonus")
         welcome_transaction.timestamp = timezone.now() - timedelta(days=5)

@@ -6,7 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import (
     MIN_TRANSFER_FEE,
@@ -20,6 +20,14 @@ from .models import (
 
 def quantize_amount(value):
     return value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
+def build_token_pair(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    }
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -49,7 +57,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             type=Transaction.Type.CREDIT,
             description="Welcome bonus",
         )
-        Token.objects.create(user=user)
         return user
 
 

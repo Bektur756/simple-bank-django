@@ -10,7 +10,11 @@
       "value": "http://localhost:8000"
     },
     {
-      "key": "token",
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
       "value": ""
     },
     {
@@ -29,7 +33,8 @@
             "exec": [
               "if (pm.response.code === 201) {",
               "  const data = pm.response.json();",
-              "  pm.collectionVariables.set('token', data.token);",
+              "  pm.collectionVariables.set('access_token', data.access);",
+              "  pm.collectionVariables.set('refresh_token', data.refresh);",
               "}"
             ]
           }
@@ -111,7 +116,8 @@
             "exec": [
               "if (pm.response.code === 200) {",
               "  const data = pm.response.json();",
-              "  pm.collectionVariables.set('token', data.token);",
+              "  pm.collectionVariables.set('access_token', data.access);",
+              "  pm.collectionVariables.set('refresh_token', data.refresh);",
               "}"
             ]
           }
@@ -149,7 +155,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Token {{token}}"
+            "value": "Bearer {{access_token}}"
           }
         ],
         "url": {
@@ -173,7 +179,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Token {{token}}"
+            "value": "Bearer {{access_token}}"
           }
         ],
         "url": {
@@ -196,7 +202,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Token {{token}}"
+            "value": "Bearer {{access_token}}"
           }
         ],
         "url": {
@@ -233,7 +239,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Token {{token}}"
+            "value": "Bearer {{access_token}}"
           }
         ],
         "body": {
