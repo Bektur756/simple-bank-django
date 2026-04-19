@@ -14,6 +14,7 @@ SimpleBank is an API-only Django service that provides basic bank account functi
 - Python 3.12
 - Django
 - Django REST Framework
+- Gunicorn
 - PostgreSQL
 - Docker Compose
 
@@ -31,7 +32,7 @@ The API will be available at:
 http://localhost:8000/api/
 ```
 
-The `web` container waits for PostgreSQL, applies migrations, and starts Django automatically.
+The `web` container waits for PostgreSQL, applies migrations, and starts the app with Gunicorn automatically.
 
 ## Run Tests
 

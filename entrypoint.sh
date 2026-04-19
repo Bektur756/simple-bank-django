@@ -7,4 +7,4 @@ until pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d 
 done
 
 python manage.py migrate --noinput
-python manage.py runserver 0.0.0.0:8000
+gunicorn simple_bank_django.wsgi:application --bind 0.0.0.0:8000 --workers 3
